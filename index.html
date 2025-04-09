@@ -29,7 +29,8 @@
       border-radius: 50%;
       background-color: #ccc;
     }
-    .circle.active { background-color: red; }
+    .circle.usa-active { background-color: #007bff; }
+    .circle.china-active { background-color: #dc3545; }
     #scoreLog {
       max-height: 200px;
       overflow-y: auto;
@@ -72,13 +73,6 @@
       .scoreboard { font-size: 1.5rem; padding: 10px; }
       .circle { width: 16px; height: 16px; }
     }
-    .circle.usa-active {
-  background-color: #007bff; /* Bootstrap mavisi */
-}
-
-.circle.china-active {
-  background-color: #dc3545; /* Bootstrap kırmızısı */
-}
   </style>
 </head>
 <body class="text-center p-4">
@@ -187,7 +181,7 @@
       document.getElementById('fightBtn').disabled = false;
       document.getElementById('usaScore').innerText = "---";
       document.getElementById('chinaScore').innerText = "---";
-      document.querySelectorAll('.circle').forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('.circle').forEach(c => c.classList.remove('usa-active', 'china-active'));
       document.getElementById('logList').innerHTML = "";
       document.getElementById("usaFlag").classList.remove("winner");
       document.getElementById("chinaFlag").classList.remove("winner");
