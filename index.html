@@ -72,6 +72,13 @@
       .scoreboard { font-size: 1.5rem; padding: 10px; }
       .circle { width: 16px; height: 16px; }
     }
+    .circle.usa-active {
+  background-color: #007bff; /* Bootstrap mavisi */
+}
+
+.circle.china-active {
+  background-color: #dc3545; /* Bootstrap kırmızısı */
+}
   </style>
 </head>
 <body class="text-center p-4">
@@ -147,10 +154,10 @@
 
       let winner = "Tie";
       if (usaTariff > chinaTariff) {
-        document.querySelectorAll('#usaRounds .circle')[usaWins].classList.add('active');
+        document.querySelectorAll('#usaRounds .circle')[usaWins].classList.add('usa-active');
         usaWins++; winner = "USA";
       } else if (chinaTariff > usaTariff) {
-        document.querySelectorAll('#chinaRounds .circle')[chinaWins].classList.add('active');
+        document.querySelectorAll('#chinaRounds .circle')[chinaWins].classList.add('china-active');
         chinaWins++; winner = "China";
       }
 
