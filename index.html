@@ -131,14 +131,23 @@
 
 <script>
   // Intro screen timeout (e.g., 4 seconds)
-  window.addEventListener('load', () => {
-    setTimeout(() => {
-      const intro = document.getElementById('introScreen');
-      if (intro) {
-        intro.classList.add('opacity-0');
-        setTimeout(() => intro.remove(), 1000);
+   window.addEventListener('load', () => {
+    let countdown = 4;
+    const intro = document.getElementById('introScreen');
+    const timerEl = document.getElementById('countdownTimer');
+
+    const interval = setInterval(() => {
+      countdown--;
+      if (timerEl) timerEl.textContent = countdown;
+
+      if (countdown <= 0) {
+        clearInterval(interval);
+        if (intro) {
+          intro.classList.add('opacity-0');
+          setTimeout(() => intro.remove(), 1000);
+        }
       }
-    }, 4000);
+    }, 1000);
   });
 </script>
   <h1 class="mb-4 fw-bold">Tariff Wars</h1>
