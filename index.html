@@ -221,7 +221,7 @@
       if (usaWins === 5 || chinaWins === 5) {
         document.getElementById('fightBtn').disabled = true;
         const finalWinner = usaWins === 5 ? "USA" : "China";
-        document.getElementById('winnerText').innerHTML = `<h3>${finalWinner} wins the game! #tariffwars2025</h3>`;
+        document.getElementById('winnerText').innerHTML = `<h3>${finalWinner} wins the game!</h3>`;
         document.getElementById(finalWinner === "USA" ? "usaFlag" : "chinaFlag").classList.add("winner");
         if (!isMuted) {
           const sound = document.getElementById(finalWinner === "USA" ? "usaSound" : "chinaSound");
