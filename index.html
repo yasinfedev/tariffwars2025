@@ -1,0 +1,266 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tariff Wars</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .flag {
+      width: 100px;
+      height: auto;
+    }
+    .scoreboard {
+      font-family: 'Courier New', monospace;
+      font-size: 2rem;
+      background-color: #000;
+      color: #0f0;
+      padding: 15px;
+      border-radius: 8px;
+      min-width: 120px;
+    }
+    .circles {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .circle {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: #ccc;
+    }
+    .circle.active {
+      background-color: red;
+    }
+    #scoreLog {
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      padding: 10px;
+      border-radius: 8px;
+      background: #fff;
+    }
+    @keyframes flagShake {
+      0% { transform: rotate(0deg); }
+      25% { transform: rotate(2deg); }
+      50% { transform: rotate(-2deg); }
+      75% { transform: rotate(2deg); }
+      100% { transform: rotate(0deg); }
+    }
+    .flag.winner {
+      animation: flagShake 0.5s ease-in-out 3;
+      filter: drop-shadow(0 0 10px gold);
+    }
+    #confettiCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 9999;
+    }
+    #muteBtn {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 10000;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 50%;
+      padding: 5px;
+      cursor: pointer;
+    }
+    @media (max-width: 576px) {
+      .flag { width: 70px; }
+      .scoreboard { font-size: 1.5rem; padding: 10px; }
+      .circle { width: 16px; height: 16px; }
+    }
+  </style>
+</head>
+<body class="text-center p-4">
+  <h1 class="mb-4 fw-bold">Tariff Wars</h1>
+  <div class="d-flex justify-content-center align-items-center flex-wrap mb-3">
+    <img src="https://flagcdn.com/us.svg" alt="USA" class="flag mx-3" id="usaFlag"/>
+    <span class="mx-2 fs-2 fw-bold">VS</span>
+    <img src="https://flagcdn.com/cn.svg" alt="China" class="flag mx-3" id="chinaFlag"/>
+  </div>
+  <div class="d-flex justify-content-center gap-4 mb-2 flex-wrap">
+    <div class="scoreboard" id="usaScore">---</div>
+    <div class="scoreboard" id="chinaScore">---</div>
+  </div>
+  <div class="d-flex justify-content-center gap-4 mb-4 flex-wrap">
+    <div class="text-center">
+      <div class="circles" id="usaRounds">
+        <div class="circle"></div><div class="circle"></div><div class="circle"></div><div class="circle"></div><div class="circle"></div>
+      </div>
+    </div>
+    <div class="text-center">
+      <div class="circles" id="chinaRounds">
+        <div class="circle"></div><div class="circle"></div><div class="circle"></div><div class="circle"></div><div class="circle"></div>
+      </div>
+    </div>
+  </div>
+  <button class="btn btn-danger px-5 py-2 mb-3" id="fightBtn" onclick="playRound()">Fight!</button>
+  <div class="container mt-3" id="scoreLog">
+    <h5 class="text-start">Score History:</h5>
+    <ul class="list-group" id="logList"></ul>
+  </div>
+  <div class="mt-4">
+    <a href="https://github.com/yasinfedev" target="_blank" class="btn btn-outline-dark me-2">GitHub</a>
+    <a href="https://x.com/yasinuiux" target="_blank" class="btn btn-outline-dark">X (Twitter)</a>
+  </div>
+
+  <canvas id="confettiCanvas"></canvas>
+  <button id="muteBtn" onclick="toggleSound()">
+    <img src="https://cdn-icons-png.flaticon.com/512/727/727269.png" alt="Mute" id="muteIcon" width="24">
+  </button>
+
+  <div class="modal fade" id="winnerModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header"><h5 class="modal-title">Game Over</h5></div>
+        <div class="modal-body">
+          <div id="winnerText"></div>
+          <button class="btn btn-primary mt-3" onclick="shareResult()">Paylaş</button>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-success" onclick="resetGame()" data-bs-dismiss="modal">Play Again</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <audio id="usaSound" src="https://actions.google.com/sounds/v1/crowds/cheer.ogg"></audio>
+  <audio id="chinaSound" src="https://actions.google.com/sounds/v1/crowds/large_crowd_cheer.ogg"></audio>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    let usaWins = 0;
+    let chinaWins = 0;
+    let round = 1;
+    let isMuted = false;
+
+    function playRound() {
+      if (usaWins >= 5 || chinaWins >= 5) return;
+      const usaTariff = Math.floor(Math.random() * 201);
+      const chinaTariff = Math.floor(Math.random() * 201);
+      document.getElementById('usaScore').innerText = usaTariff + "%";
+      document.getElementById('chinaScore').innerText = chinaTariff + "%";
+
+      let winner = "Tie";
+      if (usaTariff > chinaTariff) {
+        document.querySelectorAll('#usaRounds .circle')[usaWins].classList.add('active');
+        usaWins++;
+        winner = "USA";
+      } else if (chinaTariff > usaTariff) {
+        document.querySelectorAll('#chinaRounds .circle')[chinaWins].classList.add('active');
+        chinaWins++;
+        winner = "China";
+      }
+
+      const logEntry = document.createElement("li");
+      logEntry.className = "list-group-item small text-start";
+      logEntry.textContent = `Round ${round}: USA ${usaTariff}% - China ${chinaTariff}% → ${winner}`;
+      document.getElementById('logList').prepend(logEntry);
+      round++;
+
+      if (usaWins === 5 || chinaWins === 5) {
+        document.getElementById('fightBtn').disabled = true;
+        const finalWinner = usaWins === 5 ? "USA" : "China";
+        document.getElementById('winnerText').innerHTML = `<h3>${finalWinner} wins the game!</h3>`;
+        document.getElementById(finalWinner === "USA" ? "usaFlag" : "chinaFlag").classList.add("winner");
+        if (!isMuted) document.getElementById(finalWinner === "USA" ? "usaSound" : "chinaSound").play();
+        launchConfetti();
+        const winnerModal = new bootstrap.Modal(document.getElementById('winnerModal'));
+        winnerModal.show();
+      }
+    }
+
+    function resetGame() {
+      usaWins = 0;
+      chinaWins = 0;
+      round = 1;
+      document.getElementById('fightBtn').disabled = false;
+      document.getElementById('usaScore').innerText = "---";
+      document.getElementById('chinaScore').innerText = "---";
+      document.querySelectorAll('.circle').forEach(c => c.classList.remove('active'));
+      document.getElementById('logList').innerHTML = "";
+      document.getElementById("usaFlag").classList.remove("winner");
+      document.getElementById("chinaFlag").classList.remove("winner");
+    }
+
+    function toggleSound() {
+      isMuted = !isMuted;
+      document.getElementById("muteIcon").src = isMuted
+        ? "https://cdn-icons-png.flaticon.com/512/709/709496.png"
+        : "https://cdn-icons-png.flaticon.com/512/727/727269.png";
+    }
+
+    function shareResult() {
+      const winnerText = document.getElementById('winnerText').innerText;
+      if (navigator.share) {
+        navigator.share({
+          title: 'Tariff Wars',
+          text: winnerText,
+          url: window.location.href
+        });
+      } else {
+        alert("Paylaşım bu tarayıcıda desteklenmiyor.");
+      }
+    }
+
+    function launchConfetti() {
+      const canvas = document.getElementById("confettiCanvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      let confetti = [];
+      for (let i = 0; i < 100; i++) {
+        confetti.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          r: Math.random() * 6 + 4,
+          d: Math.random() * 50 + 10,
+          color: `hsl(${Math.floor(Math.random() * 360)}, 100%, 50%)`,
+          tilt: Math.random() * 10 - 5,
+          tiltAngle: 0,
+          tiltAngleIncrement: Math.random() * 0.07 + 0.05
+        });
+      }
+      function drawConfetti() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        confetti.forEach(c => {
+          ctx.beginPath();
+          ctx.lineWidth = c.r / 2;
+          ctx.strokeStyle = c.color;
+          ctx.moveTo(c.x + c.tilt + c.r / 2, c.y);
+          ctx.lineTo(c.x + c.tilt, c.y + c.tilt + c.r);
+          ctx.stroke();
+        });
+        updateConfetti();
+      }
+      function updateConfetti() {
+        confetti.forEach(c => {
+          c.y += Math.cos(c.d) + 2;
+          c.tiltAngle += c.tiltAngleIncrement;
+          c.tilt = Math.sin(c.tiltAngle) * 15;
+          if (c.y > canvas.height) {
+            c.y = -20;
+            c.x = Math.random() * canvas.width;
+          }
+        });
+      }
+      let confettiInterval = setInterval(drawConfetti, 20);
+      setTimeout(() => {
+        clearInterval(confettiInterval);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }, 4000);
+    }
+  </script>
+</body>
+</html>
