@@ -124,7 +124,7 @@
         <div class="modal-header"><h5 class="modal-title">Game Over</h5></div>
         <div class="modal-body">
           <div id="winnerText"></div>
-          <button class="btn btn-primary mt-3" onclick="shareResult()">Paylaş</button>
+          <button class="btn btn-primary mt-3" onclick="shareResult()">Share the game</button>
         </div>
         <div class="modal-footer">
           <button class="btn btn-success" onclick="resetGame()" data-bs-dismiss="modal">Play Again</button>
@@ -199,7 +199,7 @@
       if (navigator.share) {
         navigator.share({ title: 'Tariff Wars', text, url: location.href });
       } else {
-        alert("Paylaşım bu tarayıcıda desteklenmiyor.");
+        alert("Sharing is not supported in this browser.");
       }
     }
 
