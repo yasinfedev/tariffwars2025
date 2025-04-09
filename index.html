@@ -136,11 +136,14 @@
     const intro = document.getElementById('introScreen');
     const timerEl = document.getElementById('countdownTimer');
 
+    if (timerEl) timerEl.textContent = countdown;
+
     const interval = setInterval(() => {
       countdown--;
-      if (timerEl) timerEl.textContent = countdown;
-
-      if (countdown <= 0) {
+      if (countdown >= 0 && timerEl) {
+        timerEl.textContent = countdown;
+      }
+      if (countdown < 0) {
         clearInterval(interval);
         if (intro) {
           intro.classList.add('opacity-0');
