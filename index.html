@@ -76,6 +76,63 @@
   </style>
 </head>
 <body class="text-center p-4">
+  <!-- Responsive Intro Screen with Delay and Modal Help/How-to -->
+<div id="introScreen" class="d-flex flex-column justify-content-center align-items-center vh-100 bg-dark text-white text-center position-fixed w-100 top-0 start-0 z-3">
+  <h1 class="display-4">Welcome to Tariff Wars</h1>
+  <p class="lead">A game of economic power. Who will win the trade battle?</p>
+  <div class="mt-4">
+    <button class="btn btn-outline-light me-3" data-bs-toggle="modal" data-bs-target="#howToModal">How to Play</button>
+    <button class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#aboutModal">About Game</button>
+  </div>
+</div>
+
+<!-- About Modal -->
+<div class="modal fade" id="aboutModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">About Tariff Wars</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Tariff Wars</strong> is a fictional browser game simulating economic competition between countries through randomized tariff scores. First to win 5 rounds takes the match!</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- How To Play Modal -->
+<div class="modal fade" id="howToModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">How to Play</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ul>
+          <li>Click the <strong>Fight!</strong> button to assign random tariff scores (0-200%) to USA and China.</li>
+          <li>Whichever country has the higher score wins that round.</li>
+          <li>First to fill all 5 round circles wins the game.</li>
+          <li>Enjoy visual effects, animations, and share your result!</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Intro screen timeout (e.g., 4 seconds)
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      const intro = document.getElementById('introScreen');
+      if (intro) {
+        intro.classList.add('opacity-0');
+        setTimeout(() => intro.remove(), 1000);
+      }
+    }, 4000);
+  });
+</script>
   <h1 class="mb-4 fw-bold">Tariff Wars</h1>
   <div class="d-flex justify-content-center align-items-center flex-wrap mb-3">
     <img src="https://flagcdn.com/us.svg" alt="USA" class="flag mx-3" id="usaFlag"/>
