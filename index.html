@@ -73,12 +73,6 @@
       .scoreboard { font-size: 1.5rem; padding: 10px; }
       .circle { width: 16px; height: 16px; }
     }
-
-    #countdownTimer {
-  transition: all 0.3s ease;
-  font-weight: bold;
-  font-size: 1.8rem;
-}
   </style>
 </head>
 <body class="text-center p-4">
@@ -87,11 +81,9 @@
   <h1 class="display-4">Welcome to Tariff Wars</h1>
   <p class="lead">A game of economic power. Who will win the trade battle?</p>
   <div class="mt-4">
-  <button class="btn btn-outline-light me-3" data-bs-toggle="modal" data-bs-target="#howToModal">How to Play</button>
-  <button class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#aboutModal">About Game</button>
-</div>
-<div class="mt-4 fs-5 text-warning" id="countdownTimer">4</div>
-  
+    <button class="btn btn-outline-light me-3" data-bs-toggle="modal" data-bs-target="#howToModal">How to Play</button>
+    <button class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#aboutModal">About Game</button>
+  </div>
 </div>
 
 <!-- About Modal -->
@@ -131,26 +123,14 @@
 
 <script>
   // Intro screen timeout (e.g., 4 seconds)
-   window.addEventListener('load', () => {
-    let countdown = 4;
-    const intro = document.getElementById('introScreen');
-    const timerEl = document.getElementById('countdownTimer');
-
-    if (timerEl) timerEl.textContent = countdown;
-
-    const interval = setInterval(() => {
-      countdown--;
-      if (countdown >= 0 && timerEl) {
-        timerEl.textContent = countdown;
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      const intro = document.getElementById('introScreen');
+      if (intro) {
+        intro.classList.add('opacity-0');
+        setTimeout(() => intro.remove(), 1000);
       }
-      if (countdown < 0) {
-        clearInterval(interval);
-        if (intro) {
-          intro.classList.add('opacity-0');
-          setTimeout(() => intro.remove(), 1000);
-        }
-      }
-    }, 1000);
+    }, 4000);
   });
 </script>
   <h1 class="mb-4 fw-bold">Tariff Wars</h1>
@@ -318,18 +298,5 @@
       setTimeout(() => { clearInterval(interval); ctx.clearRect(0, 0, canvas.width, canvas.height); }, 4000);
     }
   </script>
-  <script>
-  let countdown = 4;
-  const timerEl = document.getElementById('countdownTimer');
-  const interval = setInterval(() => {
-    countdown--;
-    if (countdown <= 0) {
-      clearInterval(interval);
-    }
-    if (timerEl) {
-      timerEl.textContent = countdown;
-    }
-  }, 1000);
-</script>
 </body>
 </html>
